@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta Desa Kaibonpetangkuran</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="app-container">
+
+        <div class="header">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/LOGO_KABUPATEN_KEBUMEN.png" alt="Logo" class="header-logo">
+            <h1 class="header-title">Peta Desa Kaibonpetangkuran</h1>
+        </div>
+
+        <div id="map"></div>
+
+        <div id="compass-image-container">
+            <img src="arah mata angin.PNG" alt="Arah Mata Angin">
+        </div>
+
+        <div class="toolbar">
+            <div id="search-widget">
+                <input type="text" placeholder="Temukan alamat atau tempat">
+                <button>⌕</button>
+            </div>
+            <button id="zoom-in" class="toolbar-item" title="Perbesar Tampilan">+</button>
+            <button id="zoom-out" class="toolbar-item" title="Perkecil Tampilan">-</button>
+            <button id="home-button" class="toolbar-item" title="Tampilan Awal">🏠</button>
+            <button id="reset-button" class="toolbar-item" title="Reset Peta">🔄</button>
+            <button id="location-button" class="toolbar-item" title="Lokasi Saya">📍</button>
+            <button id="layer-list-button" class="toolbar-item" title="Daftar Layer">☰</button>
+            <button id="basemap-button" class="toolbar-item" title="Galeri Peta Dasar">🗺️</button>
+            <button id="download-button" class="toolbar-item" title="Unduh Data">💾</button>
+            <button id="help-button" class="toolbar-item" title="Panduan">❓</button>
+            <a href="https://www.instagram.com/explorepetangkuran?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" id="instagram-button" class="toolbar-item" title="Kunjungi Instagram Kami">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram">
+            </a>
+        </div>
+
+        <div id="side-panel" class="hidden">
+            <div class="panel-header">
+                <h3 id="panel-title">Judul Panel</h3>
+                <button id="close-panel-button">X</button>
+            </div>
+            <div id="panel-content">
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet@3.0.10/dist/esri-leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>

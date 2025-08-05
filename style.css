@@ -1,0 +1,458 @@
+/* =================================================================
+   0. IMPORT FONT & PENGATURAN GLOBAL
+   ================================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'Poppins', sans-serif; /* Font baru yang lebih modern */
+    overflow: hidden;
+    background-color: #EAEAEA;
+}
+
+#app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* =================================================================
+   1. HEADER / JUDUL PETA
+   ================================================================= */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 20px;
+    background-color: #0A2647; /* Warna biru tua profesional */
+    color: white;
+    flex-shrink: 0;
+    z-index: 1001;
+    height: 60px;
+    box-sizing: border-box;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.header-logo {
+    height: 40px;
+    margin-right: 15px;
+}
+
+.header-title {
+    font-size: 1.3em;
+    margin: 0;
+    font-weight: 500; /* Sedikit lebih tebal */
+}
+
+/* =================================================================
+   2. WADAH PETA
+   ================================================================= */
+#map {
+    flex-grow: 1;
+    background-color: #f0f0f0;
+    position: relative;
+}
+
+/* =================================================================
+   3. TOOLBAR KIRI
+   ================================================================= */
+.toolbar {
+    position: absolute;
+    top: 65px;
+    left: 15px;
+    display: flex;
+    flex-direction: column;
+    background-color: white; /* Latar belakang putih solid */
+    border-radius: 8px; /* Sudut lebih membulat */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    z-index: 1000;
+}
+
+.toolbar-item {
+    background-color: white;
+    border: none;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    font-size: 1.5em; /* Ukuran ikon bisa disesuaikan */
+    color: #343A40; /* Warna ikon abu-abu gelap */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease-in-out;
+}
+
+.toolbar-item:first-child {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+
+.toolbar-item:last-child {
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+
+.toolbar-item:hover {
+    background-color: #1C658C; /* Warna biru aksen saat di-hover */
+    color: white;
+}
+
+#search-widget {
+    /* KUNCI UTAMA: Mengembalikan posisi absolut dari CSS awal Anda */
+    position: absolute;
+    left: 2500%;           /* Posisikan persis di sebelah kanan toolbar */
+    top: 0;               /* Sejajarkan dengan bagian atas toolbar */
+    margin-left: 10px;    /* Beri jarak 10px dari toolbar */
+    z-index: 1001;        /* Pastikan muncul di atas elemen lain */
+    width: max-content;   /* Lebar container sesuai isinya saja */
+
+    /* Style visual yang sudah kita perbarui sebelumnya */
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 5px;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+#search-widget input {
+    border: 1px solid #ccc;
+    padding: 0 10px;
+    width: 220px;
+    height: 32px;
+    border-radius: 4px 0 0 4px;
+    border-right: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9em;
+}
+
+#search-widget button {
+    width: 40px;
+    height: 34px;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    border-radius: 0 4px 4px 0;
+}
+
+/* =================================================================
+   4. SIDE PANEL
+   ================================================================= */
+#side-panel {
+    position: absolute;
+    left: 75px;
+    top: 75px;
+    width: 220px; /* <--- Lebar panel dipersempit */
+    max-height: calc(100vh - 90px);
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease-in-out, opacity 0.3s;
+}
+
+#side-panel.hidden {
+    transform: translateX(-20px) scale(0.95);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 18px;
+    background-color: #1C658C; /* Warna biru aksen */
+    color: white;
+    border-bottom: 1px solid #ddd;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.panel-header h3 {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+#close-panel-button {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    transition: transform 0.3s ease;
+}
+
+#close-panel-button:hover {
+    transform: rotate(90deg);
+}
+
+#panel-content {
+    padding: 15px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+/* =================================================================
+   5. GAYA UNTUK GALERI PETA DASAR (BASEMAP)
+   ================================================================= */
+.basemap-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.gallery-item {
+    border: 3px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.gallery-item:hover {
+    border-color: #1C658C;
+    transform: translateY(-3px);
+}
+
+.gallery-item.active {
+    border-color: #007bff;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    display: block;
+}
+
+.gallery-item span {
+    display: block;
+    padding: 8px 5px;
+    font-size: 0.9em;
+    background-color: #f8f8f8;
+}
+
+/* =================================================================
+   6. KUSTOMISASI KONTROL & POPUP LEAFLET
+   ================================================================= */
+.leaflet-control-layers-overlays label {
+    display: flex; /* Menggunakan flexbox untuk alignment */
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+.leaflet-control-layers-overlays label:hover {
+    background-color: #f0f0f0;
+}
+
+/* Kustomisasi Popup */
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    padding: 1px; /* Reset padding bawaan */
+}
+
+.leaflet-popup-content {
+    margin: 0 !important;
+}
+
+.leaflet-popup-content table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+}
+
+.leaflet-popup-content th, .leaflet-popup-content td {
+    padding: 10px;
+    text-align: left;
+}
+
+.leaflet-popup-content th {
+    font-weight: 600;
+    background-color: #F8F9FA;
+    color: #343A40;
+    width: 40%;
+}
+
+.leaflet-popup-content tr:not(:last-child) {
+    border-bottom: 1px solid #EAEAEA;
+}
+
+/* =================================================================
+   7. GAYA UNTUK LEGENDA DI DAFTAR LAYER
+   ================================================================= */
+.leaflet-control-layers-overlays label {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px; /* Jarak bisa sedikit dikurangi juga */
+    border-radius: 5px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+    margin-bottom: 4px; /* Jarak antar item juga dikurangi */
+    font-size: 0.9em; /* Font diperkecil */
+}
+
+   .legend-icon {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 8px;
+    vertical-align: middle;
+    border: 1px solid #555;
+    flex-shrink: 0; /* Mencegah ikon menyusut */
+}
+
+.legend-icon-line {
+    height: 3px !important;
+    border-radius: 1px;
+    border: none;
+}
+
+.legend-icon-img {
+    width: 12px;
+    height: 12px;
+    vertical-align: middle;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+/* =================================================================
+   8. PENYESUAIAN PANEL DAFTAR LAYER
+   ================================================================= */
+#side-panel .leaflet-control-layers {
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+#side-panel .leaflet-control-layers-base {
+    padding: 0;
+    margin-bottom: 10px;
+}
+/* =================================================================
+   GAYA UNTUK TOMBOL RUTE DI POPUP
+   ================================================================= */
+.routing-button {
+    margin-top: 8px;
+    padding: 6px 12px;
+    background-color: #0A2647; /* Warna biru tua seperti header */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+}
+
+.routing-button:hover {
+    background-color: #1C658C; /* Warna biru aksen saat hover */
+}
+/* =================================================================
+   9. KUSTOMISASI PANEL LEAFLET ROUTING MACHINE
+   ================================================================= */
+
+/* Mengatur wadah utama panel rute */
+.leaflet-routing-container {
+    top: 70px !important;
+    background-color: white; /* Latar belakang solid putih */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2); /* Efek bayangan agar terangkat */
+    border-radius: 6px; /* Sudut membulat */
+    max-height: 70vh; /* Tinggi maksimal 70% dari tinggi layar */
+    overflow-y: auto; /* Aktifkan scroll jika kontennya panjang */
+    max-width: 320px; /* Lebar maksimal agar tidak terlalu besar */
+}
+
+/* Mengatur agar input pencarian tidak transparan */
+.leaflet-routing-geocoders input {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+}
+
+/* Memberi garis pemisah dan padding antar instruksi rute */
+.leaflet-routing-alt {
+    border-top: 1px solid #ddd;
+    padding: 10px;
+}
+
+/* Mengatur header pada setiap rute (jarak dan waktu) */
+.leaflet-routing-alt h2 {
+    font-size: 1.1em;
+    margin-bottom: 8px;
+}
+
+/* Mengatur setiap baris instruksi */
+.leaflet-routing-instruction {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+/* =================================================================
+   10. POSISI KONTROL KOMPAS
+   ================================================================= */
+.leaflet-control-compass {
+    top: auto !important;      /* Nonaktifkan posisi atas bawaan */
+    bottom: 20px !important;   /* Atur 20px dari tepi bawah */
+    left: auto !important;     /* Nonaktifkan posisi kiri bawaan */
+    right: 15px !important;    /* Atur 15px dari tepi kanan */
+}
+/* =================================================================
+   10. POSISI GAMBAR KOMPAS STATIS
+   ================================================================= */
+#compass-image-container {
+    position: absolute;
+    bottom: 20px;
+    right: 15px;
+    z-index: 1000; /* Memastikan gambar di atas peta */
+    pointer-events: none; /* Agar gambar tidak bisa di-klik */
+}
+
+#compass-image-container img {
+    width: 80px; /* Atur lebar gambar, sesuaikan jika perlu */
+    height: auto;
+    opacity: 0.85; /* Sedikit transparan agar tidak terlalu mencolok */
+}
+/* =================================================================
+   11. GAYA UNTUK SUB-ITEM LEGENDA
+   ================================================================= */
+.legend-sub-items {
+    display: block;
+    padding-left: 28px; /* Memberi jarak inden dari kiri */
+    margin-top: 5px; /* Memberi sedikit spasi dari item utama */
+}
+
+.legend-item {
+    display: flex; /* Menggunakan flexbox agar rapi */
+    align-items: center;
+    margin-bottom: 3px; /* Jarak antar sub-item */
+    font-size: 0.95em; /* Ukuran font bisa disesuaikan */
+}
+.dusun-label {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    font-weight: bold;
+    font-size: 12px;
+    color: #333;
+    text-shadow: 1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white;
+}
+/* =================================================================
+   13. GAYA UNTUK TOMBOL INSTAGRAM
+   ================================================================= */
+#instagram-button img {
+    width: 24px;  /* Atur lebar ikon */
+    height: 24px; /* Atur tinggi ikon */
+    vertical-align: middle; /* Agar ikon berada di tengah secara vertikal */
+}
